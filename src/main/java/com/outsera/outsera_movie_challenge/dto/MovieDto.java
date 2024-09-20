@@ -1,27 +1,40 @@
 package com.outsera.outsera_movie_challenge.dto;
 
-import com.opencsv.bean.CsvBindByName;
-import lombok.*;
+import com.outsera.outsera_movie_challenge.entity.Movie;
+import lombok.Getter;
+import lombok.Setter;
 
-@Builder
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+//@Builder
 public class MovieDto {
 
-	@CsvBindByName(column = "year")
 	private Integer year;
 
-	@CsvBindByName(column = "title")
 	private String title;
 
-	@CsvBindByName(column = "studios")
-	private String studios;
+	private List<String> studios = new ArrayList<>();
 
-	@CsvBindByName(column = "producers")
-	private String producers;
+	private List<String> producers = new ArrayList<>();
 
-	@CsvBindByName(column = "winner")
 	private boolean winner;
+
+	/*public MovieDto(Integer year, String title, List<String> studios, List<String> producers, boolean winner) {
+		this.year = year;
+		this.title = title;
+		this.winner = winner;
+		studios.forEach(ms -> this.studios.add(ms));
+		producers.forEach(mp -> this.producers.add(mp));
+	}*/
+
+	public MovieDto(Movie movie) {
+		this.year = movie.getYear();
+		this.title = movie.getTitle();
+		this.winner = movie.isWinner();
+		movie.getStudios().forEach(ms -> this.getStudios().add(ms.getStudio().getName()));
+		movie.getProducers().forEach(mp -> this.producers.add(mp.getProducer().getName()));
+	}
 }

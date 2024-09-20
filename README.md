@@ -1,30 +1,63 @@
 # outsera-movie-challenge
 Code challenge for Outsera (Movie API)
 
-# Read Me First
-The following was discovered as part of building this project:
+## Especificação do Teste
+Desenvolva uma API RESTful para possibilitar a leitura da lista de indicados e 
+vencedores da categoria Pior Filme do Golden Raspberry Awards.
 
-* The original package name 'com.outsera.outsera-movie-challenge' is invalid and this project uses 'com.outsera.outsera_movie_challenge' instead.
+## Requisito do sistema:
+- Ler o arquivo CSV dos filmes e inserir os dados em uma base de dados ao 
+  iniciar a aplicação.
+   
+## Requisitos da API:
+- Obter o produtor com maior intervalo entre dois prêmios consecutivos, e o que 
+  obteve dois prêmios mais rápido, seguindo a especificação de formato definida 
+  na página 2.
+  
+## Requisitos não funcionais do sistema:
+- O web service RESTful deve ser implementado com base no nível 2 de maturidade
+   de Richardson;
+- Devem ser implementados somente testes de integração. Eles devem garantir que
+   os dados obtidos estão de acordo com os dados fornecidos na proposta;
+- O banco de dados deve estar em memória utilizando um SGBD embarcado (por
+   exemplo, H2). Nenhuma instalação externa deve ser necessária;
+- A aplicação deve conter um readme com instruções para rodar o projeto e os
+   testes de integração.
+- O código-fonte deve ser disponibilizado em um repositório git (Github, 
+  Gitlab, Bitbucket, etc).
 
-# Getting Started
+### Formato da API:
+Intervalo de prêmios:
 
-### Reference Documentation
-For further reference, please consider the following sections:
-
-* [Official Gradle documentation](https://docs.gradle.org)
-* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/3.3.3/gradle-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.3.3/gradle-plugin/packaging-oci-image.html)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/3.3.3/reference/htmlsingle/index.html#web)
-
-### Guides
-The following guides illustrate how to use some features concretely:
-
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
-
-### Additional Links
-These additional references should also help you:
-
-* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
-
+```json
+{
+  "min": [
+    {
+      "producer": "Producer 1",
+      "interval": 1,
+      "previousWin": 2008,
+      "followingWin": 2009
+    },
+    {
+      "producer": "Producer 2",
+      "interval": 1,
+      "previousWin": 2018,
+      "followingWin": 2019
+    }
+  ],
+  "max": [
+    {
+      "producer": "Producer 1",
+      "interval": 99,
+      "previousWin": 1900,
+      "followingWin": 1999
+    },
+    {
+      "producer": "Producer 2",
+      "interval": 99,
+      "previousWin": 2000,
+      "followingWin": 2099
+    }
+  ]
+}
+```
