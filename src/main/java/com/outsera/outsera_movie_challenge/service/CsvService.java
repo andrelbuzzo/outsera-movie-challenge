@@ -14,7 +14,7 @@ import java.io.Reader;
 @RequiredArgsConstructor
 public class CsvService {
 
-	final public Iterable<CSVRecord> newParser(InputStream in) throws IOException {
+	final public Iterable<CSVRecord> parseCSV(InputStream in) throws IOException {
 		Reader reader = new InputStreamReader(in);
 		Iterable<CSVRecord> records = CSVFormat.EXCEL
 				.withSkipHeaderRecord()

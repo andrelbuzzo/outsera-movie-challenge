@@ -9,7 +9,6 @@ import java.util.List;
 
 @Getter
 @Setter
-//@Builder
 public class MovieDto {
 
 	private Integer year;
@@ -21,14 +20,6 @@ public class MovieDto {
 	private List<String> producers = new ArrayList<>();
 
 	private boolean winner;
-
-	/*public MovieDto(Integer year, String title, List<String> studios, List<String> producers, boolean winner) {
-		this.year = year;
-		this.title = title;
-		this.winner = winner;
-		studios.forEach(ms -> this.studios.add(ms));
-		producers.forEach(mp -> this.producers.add(mp));
-	}*/
 
 	public MovieDto(Movie movie) {
 		this.year = movie.getYear();

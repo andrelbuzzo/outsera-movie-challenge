@@ -1,5 +1,6 @@
 package com.outsera.outsera_movie_challenge.service;
 
+import com.outsera.outsera_movie_challenge.dto.StudioDto;
 import com.outsera.outsera_movie_challenge.entity.Movie;
 import com.outsera.outsera_movie_challenge.entity.MovieStudio;
 import com.outsera.outsera_movie_challenge.entity.Studio;
@@ -19,11 +20,8 @@ public class StudioService {
 	private final MovieStudioRepository movieStudioRepository;
 
 	public void saveStudios(Movie movie, String studios) {
-//		log.info(studios);
-		for (String strStudio : studios.split(",|\\ and ")) {
+		for (String strStudio : studios.split(",|\\ and " )) {
 			Studio studio = new Studio(strStudio.trim());
-//			log.info(studio);
-//			log.info("----");
 
 			Example<Studio> example = Example.of(studio);
 
@@ -36,6 +34,10 @@ public class StudioService {
 
 			movieStudioRepository.save(new MovieStudio(movie, studio));
 		}
+	}
+
+	public StudioDto getGreatestWinners() {
+		return new StudioDto(studioRepository.findByWinners());
 	}
 
 }

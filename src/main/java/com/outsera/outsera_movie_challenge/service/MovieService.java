@@ -1,8 +1,11 @@
 package com.outsera.outsera_movie_challenge.service;
 
-import com.outsera.outsera_movie_challenge.dto.BaseResponse;
+import com.outsera.outsera_movie_challenge.dto.MovieDto;
+import com.outsera.outsera_movie_challenge.dto.YearWinnerDto;
+import com.outsera.outsera_movie_challenge.dto.YearWinnerMovieDto;
 import com.outsera.outsera_movie_challenge.entity.Movie;
-import com.outsera.outsera_movie_challenge.exception.InvalidIntervalTypeException;
+import com.outsera.outsera_movie_challenge.exception.BadRequestException;
+import com.outsera.outsera_movie_challenge.exception.ResourceNotFoundException;
 import com.outsera.outsera_movie_challenge.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -13,9 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +37,12 @@ public class MovieService {
 		return movieRepository.count();
 	}
 
-	public void saveFromCsv() throws IOException {
+	public void saveFromCsv() {
 		Iterable<CSVRecord> records = null;
 		try (InputStream inputStream = resource.getInputStream()) {
 			records = parseCSV(inputStream);
-//			log.info(records.size());
 
 			records.forEach(record -> {
-//				log.info(record);
 				Movie movie = save(record);
 
 				Optional.ofNullable(movie).ifPresent(m -> {
@@ -64,8 +65,6 @@ public class MovieService {
 		Movie movie = new Movie(Integer.valueOf(record.get("year" )),
 				record.get("title" ),
 				record.get("winner" ));
-//		log.info("movie:");
-//		log.info(movie);
 		try {
 			movieRepository.save(movie);
 		} catch (Exception e) {
@@ -76,65 +75,53 @@ public class MovieService {
 	}
 
 	private Iterable<CSVRecord> parseCSV(InputStream inputStream) throws IOException {
-//		return csvService.parseCSV(inputStream, MovieDto.class);
-		return csvService.newParser(inputStream);
-	}
-
-	public void populateMovies() throws IOException {
-		try (InputStream inputStream = resource.getInputStream()) {
-//			List<Movie> movies = parseCSV(inputStream);
-//			movies.forEach(m -> {
-//				log.info(m);
-//			});
-		}
+		return csvService.parseCSV(inputStream);
 	}
 
 	public List<Movie> findAll() {
 		return movieRepository.findAll();
 	}
 
-	public List<Movie> min(List<Movie> list) {
-		return list;
+	public List<Movie> getMoviesFromAYear(Integer year) {
+		return movieRepository.findByYear(year);
 	}
 
-	public List<BaseResponse> getAwardInterval(String type) {
-		List<Movie> list = findAll();
-		List<Movie> filteredList = null;
+	public List<MovieDto> getMoviesByYear(Integer year) {
+		List<Movie> movies = movieRepository.findByYear(year);
 
-		if (type.equals("min" )) {
-			filteredList = getMinAwardInterval(list);
-		} else if (type.equals("max" )) {
-//			filteredList = getMaxAwardInterval(list);
-		} else {
-			throw new InvalidIntervalTypeException("Award Interval", type);
+		if (movies == null || movies.isEmpty()) {
+			return new ArrayList<>();
 		}
 
-		List<BaseResponse> response = null;
+		List<MovieDto> moviesDto = new ArrayList<>();
+		for (Movie m : movies) {
+			moviesDto.add(new MovieDto(m));
+		}
 
-//		filteredList.forEach(r -> new BaseResponse(r.getProducers(), 99, 1900, 1999));
-
-		return response;
-
-		/*List<BaseResponse> response = new ArrayList<>() {{
-			add(new BaseResponse("producer", 99, 1900, 1999));
-			add(new BaseResponse("producer", 99, 2000, 2099));
-		}};*/
+		return moviesDto;
 	}
 
-	public List<Movie> getMinAwardInterval(List<Movie> list) {
-		log.info(list);
-		List<Movie> winners = list.stream()
-				.filter(Movie::isWinner)
-				.collect(Collectors.toList());
-
-		log.info(winners);
-
-		return winners;
+	public YearWinnerDto getYearsWithMoreThanOneWinners() {
+		List<YearWinnerMovieDto> years = movieRepository.findYearsWithMoreThanOneWinner();
+		if (years == null || years.isEmpty()) {
+			return new YearWinnerDto();
+		}
+		return new YearWinnerDto(years);
 	}
 
-//	public List<BaseResponse> getMaxAwardInterval(List<Movie> list) {
-//		log.info(list);
-//		return response;
-//	}
+	public void remove(Long id) {
+		Optional<Movie> optional = movieRepository.findById(id);
+
+		if (!optional.isPresent()) {
+			throw new ResourceNotFoundException();
+		}
+
+		Movie movie = optional.get();
+		if (movie.isWinner()) {
+			throw new BadRequestException();
+		}
+
+		movieRepository.delete(movie);
+	}
 
 }
