@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class OutseraMovieChallengeApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OutseraMovieChallengeApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 	// inserting data after application is up

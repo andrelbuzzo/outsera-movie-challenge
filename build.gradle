@@ -19,6 +19,8 @@ repositories {
 
 ext {
 	springdocVersion = "2.6.0"
+	jUnitVersion = "5.9.0"
+	jUnitSuiteVersion = "1.8.1"
 }
 
 dependencies {
@@ -35,6 +37,7 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation "org.junit.platform:junit-platform-suite-engine:${jUnitSuiteVersion}"
 }
 
 tasks.named('test') {

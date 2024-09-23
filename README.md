@@ -61,3 +61,53 @@ Intervalo de prêmios:
   ]
 }
 ```
+
+## Requisitos
+Para executar o projeto é necessário instalação do JDK 17. 
+O passo-a-passo abaixo foi feito com base no Intellij IDEA.
+
+## Configurações
+- Por padrão a aplicação está configurada com o servlet.contextPath=/api para alterá-lo abra o arquivo application.properties e altere o valor da propriedade.
+```yaml
+    # Context
+    server:
+      port: 8080
+      servlet:
+        contextPath: /api
+```
+- Para alterar as configurações do banco de dados com URL, usuário, senha e url do console, e ativar/desativar o console, abra o arquivo application.properties. A opções do banco H2 e as propriedades do datasource são exibidas como abaixo:
+```yaml
+    # Datasource
+    datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+    # JPA
+    jpa:
+      database-platform: org.hibernate.dialect.H2Dialect
+      properties.hibernate.dialect: org.hibernate.dialect.H2Dialect
+      hibernate.ddl-auto: create-drop
+      defer-datasource-initialization: true
+    # H2
+    h2:
+      console:
+        enabled: true
+        path: /h2
+```
+
+## Para executar o projeto
+Para executar o projeto, nenhuma instalação externa é necessária. Ao ser iniciada, a aplicação cria o banco de dados e o popula com os dados do arquivo movielist.csv, que se encontra em *src/main/resources/static*.
+1. Clone o repositório o faça download;
+2. Se está usando uma ferramenta externa a IDE, importe o projeto como projeto Maven existente;
+3. Execute o comando Maven abaixo:
+```sh
+        $ mvn install -Dmaven.test.skip=true
+```
+4. Para iniciar a aplicação clique no projeto com o botão direito do mouse, vá até a opção *Run As* e selecione Spring Boot App.
+
+## EndPoints
+Para ver a lista de chamadas REST disponíveis, seus parametros, códigos de resposta HTTP, e tipo de retorno, inicie a aplicação e acesse: http://localhost:8080/api/docs
+
+## Testes
+Para executar os testes abra a classe AppTest.java, clique em Run AppTest. Isso fará com que todos os testes de integração implementados sejam executados.

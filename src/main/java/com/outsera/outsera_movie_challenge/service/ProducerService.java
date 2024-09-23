@@ -13,9 +13,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -27,7 +25,7 @@ public class ProducerService {
 	private final MovieProducerRepository movieProducerRepository;
 
 	public void saveProducers(Movie movie, String producers) {
-		for (String strProducer : producers.split(",|\\ and " )) {
+		for (String strProducer : producers.split(",|\\ and ")) {
 			Producer producer = new Producer(strProducer.trim());
 
 			Example<Producer> example = Example.of(producer);
@@ -46,52 +44,49 @@ public class ProducerService {
 		List<MovieProducer> mpList = movieProducerRepository.findByMovieWinnerOrderByProducerId(true);
 
 		ProducerMinMaxPrizesDto Dto = new ProducerMinMaxPrizesDto();
-		Dto.addMin(filterMovieProducers(mpList, "min" ));
-		Dto.addMax(filterMovieProducers(mpList, "max" ));
+		Dto.addMin(filterMovieProducers(mpList, "min"));
+		Dto.addMax(filterMovieProducers(mpList, "max"));
 
 		return Dto;
 	}
 
 	private List<ProducerPrizesDto> filterMovieProducers(List<MovieProducer> mpList, String type) {
-		List<ProducerPrizesDto> list = new ArrayList<>();
 		var ref = new Object() {
-			Integer minMaxInterval = type.equals("max" ) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+			Integer minMaxInterval = type.equals("max") ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 		};
 
-		// gets the list of producers with duplicate values
+		List<ProducerPrizesDto> list = new ArrayList<>();
 		mpList.forEach(actual -> mpList.forEach(next -> {
-			if (!next.equals(actual)) { // checks if next is not the first element therefore the same as actual
+			if (!actual.equals(next)) { // skips if actual and next are the same element
 				if (actual.getProducer().equals(next.getProducer())) {
 					Integer interval = Math.abs(actual.getMovie().getYear() - next.getMovie().getYear());
 
-					if ((type.equals("min" ) && interval < ref.minMaxInterval)
-							|| (type.equals("max" ) && interval > ref.minMaxInterval)) {
+					if ((type.equals("min") && interval < ref.minMaxInterval)
+							|| (type.equals("max") && interval > ref.minMaxInterval)) {
 						ProducerPrizesDto dto = new ProducerPrizesDto(actual.getProducer().getName(), interval,
 								actual.getMovie().getYear(), next.getMovie().getYear());
-
-						list.add(dto);
+						if (!list.contains(dto))
+							list.add(dto);
 					}
 				}
 			}
 		}));
 
-		// get the min/max interval
+		// get the real min/max interval
 		list.forEach(item -> {
-			if (type.equals("min" ) && item.getInterval() < ref.minMaxInterval
-					|| (type.equals("max" ) && item.getInterval() > ref.minMaxInterval)) {
+			if (type.equals("min") && item.getInterval() < ref.minMaxInterval
+					|| (type.equals("max") && item.getInterval() > ref.minMaxInterval)) {
 				ref.minMaxInterval = item.getInterval();
 			}
 		});
 
-		// removes duplicated values
-		Set<String> dtoSet = new HashSet<>();
-		List<ProducerPrizesDto> listWithoutDuplicates = list.stream()
+
+		// Removes duplicated values in the list
+		List<ProducerPrizesDto> listWithoutDuplicatedItems = list.stream()
 				.filter(item -> item.getInterval() == ref.minMaxInterval)
-				.filter(item -> dtoSet.add(item.getProducer()))
-				.distinct()
 				.collect(Collectors.toList());
 
-		return listWithoutDuplicates;
+		return listWithoutDuplicatedItems;
 	}
 
 }
