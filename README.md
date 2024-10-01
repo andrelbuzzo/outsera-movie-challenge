@@ -98,13 +98,9 @@ O passo-a-passo abaixo foi feito com base no Intellij IDEA.
 
 ## Para executar o projeto
 Para executar o projeto, nenhuma instalação externa é necessária. Ao ser iniciada, a aplicação cria o banco de dados e o popula com os dados do arquivo movielist.csv, que se encontra em *src/main/resources/static*.
-1. Clone o repositório o faça download;
-2. Se está usando uma ferramenta externa a IDE, importe o projeto como projeto Maven existente;
-3. Execute o comando Maven abaixo:
-```sh
-        $ mvn install -Dmaven.test.skip=true
-```
-4. Para iniciar a aplicação clique no projeto com o botão direito do mouse, vá até a opção *Run As* e selecione Spring Boot App.
+1. Clone o repositório;
+2. Importe o projeto como projeto Gradle existente;
+3. Para iniciar a aplicação, clique no projeto com o botão direito do mouse, vá até a opção *Run As* e selecione Spring Boot App.
 
 ## EndPoints
 Para ver a lista de chamadas REST disponíveis, seus parametros, códigos de resposta HTTP, e tipo de retorno, inicie a aplicação e acesse: http://localhost:8080/api/docs
